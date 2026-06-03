@@ -73,7 +73,7 @@ public class CicloTransporteService {
 
         ciclo.setEstadoCiclo(nuevoEstado);
 
-        // 🌟 AUTOMATIZACIÓN DEL ASIGNADOR EXTERNO 🌟
+        // AUTOMATIZACIÓN DEL ASIGNADOR EXTERNO
         if (nuevoEstado == EstadoCiclo.CARGANDO) {
             try {
                 // Consultamos el destino de manera automática usando la pala y el material del ciclo
@@ -99,7 +99,6 @@ public class CicloTransporteService {
         return cicloRepository.findByCamionId(camionId);
     }
 
-    // 🎯 AQUÍ ESTÁ EL MÉTODO QUE HACÍA FALTA REINTEGRAR
     @Transactional(readOnly = true)
     public List<CicloTransporte> obtenerCiclosPorTurno(Long turnoId) {
         return cicloRepository.findByTurnoId(turnoId);

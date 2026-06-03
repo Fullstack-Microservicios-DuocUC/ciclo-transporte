@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ProblemDetail handleResourceNotFound(ResourceNotFoundException ex) {
-        System.out.println("🟡 Recurso no encontrado: " + ex.getMessage());
+        System.out.println("Recurso no encontrado: " + ex.getMessage());
 
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(
             HttpStatus.NOT_FOUND,
