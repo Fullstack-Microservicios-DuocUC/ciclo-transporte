@@ -12,7 +12,7 @@ public class ActualizarEstadoDTO {
 
     @NotNull(message = "El ID del ciclo es obligatorio")
     @Min(value = 1, message = "El ID del ciclo debe ser un número entero mayor que 0")
-    private Integer id;
+    private Long id;
 
     @NotNull(message = "El nuevo estado del ciclo es obligatorio")
     private EstadoCiclo nuevoEstado;

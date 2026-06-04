@@ -67,7 +67,7 @@ public class CicloTransporteService {
     }
 
     @Transactional
-    public CicloTransporte actualizarEstado(Integer cicloId, EstadoCiclo nuevoEstado, Destino destino, Double toneladas) {
+    public CicloTransporte actualizarEstado(Long cicloId, EstadoCiclo nuevoEstado, Destino destino, Double toneladas) {
         CicloTransporte ciclo = cicloRepository.findById(cicloId)
         .orElseThrow(() -> new ResourceNotFoundException("El ciclo con ID " + cicloId + " no existe."));
 
@@ -80,7 +80,7 @@ public class CicloTransporteService {
                 String destinoAutomatico = asignadorService.obtenerDestinoPorMaterialId(ciclo.getPalaId(), ciclo.getMaterialId());
                 ciclo.setDestino(Destino.valueOf(destinoAutomatico.toUpperCase()));
             } catch (Exception e) {
-                System.out.println("⚠️ Alerta: Falló la asignación automática, usando respaldo manual: " + e.getMessage());
+                System.out.println("Alerta: Falló la asignación automática, usando respaldo manual: " + e.getMessage());
                 if (destino != null) ciclo.setDestino(destino);
             }
 

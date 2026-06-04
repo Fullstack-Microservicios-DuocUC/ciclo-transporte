@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import cl.duoc.mineria.ciclo_transporte.model.CicloTransporte;
 
 @Repository
-public interface CicloTransporteRepository extends JpaRepository<CicloTransporte, Integer> {
+public interface CicloTransporteRepository extends JpaRepository<CicloTransporte, Long> {
     
     List<CicloTransporte> findByCamionId(Long camionId);
 

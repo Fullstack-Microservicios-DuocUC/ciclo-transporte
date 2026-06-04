@@ -24,7 +24,7 @@ public class ExternalValidationService {
             return existe != null && existe;
         } catch (Exception e) {
             // Imprime la causa real (ej: Connection refused o 404 Not Found)
-            System.out.println("⚠️ [Transporte] Error en Camiones (8084): " + e.getMessage());
+            System.out.println("[Transporte] Error en Camiones (8084): " + e.getMessage());
             return true; 
         }
     }
@@ -39,7 +39,7 @@ public class ExternalValidationService {
                 .block();
             return existe != null && existe;
         } catch (Exception e) {
-            System.out.println("⚠️ [Transporte] Error en Palas (8083): " + e.getMessage());
+            System.out.println("[Transporte] Error en Palas (8083): " + e.getMessage());
             return true;
         }
     }
@@ -55,10 +55,10 @@ public class ExternalValidationService {
                 .block();
             return esPaleroValido != null && esPaleroValido;
         } catch (WebClientResponseException.BadRequest e) {
-            System.out.println("❌ [Validación] El usuario existe pero no cuenta con el rol OPERADOR_PALA.");
+            System.out.println("[Validación] El usuario existe pero no cuenta con el rol OPERADOR_PALA.");
             return false;
         } catch (Exception e) {
-            System.out.println("⚠️ [Transporte] Error en Usuarios (8081): " + e.getMessage());
+            System.out.println("[Transporte] Error en Usuarios (8081): " + e.getMessage());
             return true; 
         }
     }
@@ -73,7 +73,7 @@ public class ExternalValidationService {
                 .block();
             return existe != null && existe;
         } catch (Exception e) {
-            System.out.println("⚠️ [Transporte] Error en Materiales (8086): " + e.getMessage());
+            System.out.println("[Transporte] Error en Materiales (8086): " + e.getMessage());
             return true;
         }
     }
