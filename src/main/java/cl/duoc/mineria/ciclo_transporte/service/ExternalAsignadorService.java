@@ -34,23 +34,19 @@ public class ExternalAsignadorService {
         }
     }
 
-   public String obtenerDestinoPorMaterialId(Long palaId, Long materialId) {
+    public String obtenerDestinoPorMaterialId(Long palaId, Long materialId) {
         try {
-            // 1. Usamos Map<String, Object> y ParameterizedTypeReference para evitar el "raw type"
             Map<String, Object> material = this.webClient.get()
                     .uri("http://127.0.0.1:8086/api/v1/materiales/{id}", materialId)
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                     .block();
 
-            String clasificacion = "SULFUROS"; // Valor por defecto seguro
-            if (material != null) {
-                if (material.containsKey("clasificacion")) clasificacion = (String) material.get("clasificacion");
-                else if (material.containsKey("nombre")) clasificacion = (String) material.get("nombre");
-                else if (material.containsKey("tipo")) clasificacion = (String) material.get("tipo");
+            if (material == null || !material.containsKey("clasificacion")) {
+                throw new IllegalArgumentException("El material " + materialId + " no tiene una clasificación geológica válida.");
             }
 
-            // 2. Con la clasificación lista, llamamos a nuestro método original que consulta al Asignador
+            String clasificacion = (String) material.get("clasificacion");
             return obtenerDestinoAutomatico(palaId, clasificacion);
 
         } catch (Exception e) {

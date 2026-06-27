@@ -1,6 +1,7 @@
 package cl.duoc.mineria.ciclo_transporte.service;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -59,7 +60,7 @@ public class CicloTransporteService {
         nuevoCiclo.setCamionId(camionId);
         nuevoCiclo.setPalaId(palaId);
         nuevoCiclo.setPaleroId(paleroId);
-        nuevoCiclo.setMaterialId(materialId); 
+        nuevoCiclo.setMaterialId(materialId);
         nuevoCiclo.setEstadoCiclo(EstadoCiclo.EN_TRANSITO);
         nuevoCiclo.setFechaHoraInicio(LocalDateTime.now());
 
@@ -69,20 +70,25 @@ public class CicloTransporteService {
     @Transactional
     public CicloTransporte actualizarEstado(Long cicloId, EstadoCiclo nuevoEstado, Destino destino, Double toneladas) {
         CicloTransporte ciclo = cicloRepository.findById(cicloId)
-        .orElseThrow(() -> new ResourceNotFoundException("El ciclo con ID " + cicloId + " no existe."));
+            .orElseThrow(() -> new ResourceNotFoundException("El ciclo con ID " + cicloId + " no existe."));
 
         ciclo.setEstadoCiclo(nuevoEstado);
 
-        // AUTOMATIZACIÓN DEL ASIGNADOR EXTERNO
         if (nuevoEstado == EstadoCiclo.CARGANDO) {
+            Destino destinoFinal;
             try {
-                // Consultamos el destino de manera automática usando la pala y el material del ciclo
-                String destinoAutomatico = asignadorService.obtenerDestinoPorMaterialId(ciclo.getPalaId(), ciclo.getMaterialId());
-                ciclo.setDestino(Destino.valueOf(destinoAutomatico.toUpperCase()));
+                String destinoAutomatico = asignadorService.obtenerDestinoPorMaterialId(
+                    ciclo.getPalaId(), ciclo.getMaterialId());
+                destinoFinal = mapearDestinoExterno(destinoAutomatico);
             } catch (Exception e) {
-                System.out.println("Alerta: Falló la asignación automática, usando respaldo manual: " + e.getMessage());
-                if (destino != null) ciclo.setDestino(destino);
+                if (destino == null) {
+                    throw new CicloValidationException(
+                        "No se pudo determinar el destino automáticamente y no se proporcionó " +
+                        "un destino manual de respaldo: " + e.getMessage());
+                }
+                destinoFinal = destino;
             }
+            ciclo.setDestino(destinoFinal);
 
             if (toneladas != null) ciclo.setToneladasCargadas(toneladas);
         }
@@ -102,5 +108,16 @@ public class CicloTransporteService {
     @Transactional(readOnly = true)
     public List<CicloTransporte> obtenerCiclosPorTurno(Long turnoId) {
         return cicloRepository.findByTurnoId(turnoId);
+    }
+
+    // Convierte el String del Asignador al enum local de forma segura
+    private Destino mapearDestinoExterno(String destinoStr) {
+        try {
+            return Destino.valueOf(destinoStr.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new CicloValidationException(
+                "El destino recibido del Asignador no es válido: '" + destinoStr +
+                "'. Valores aceptados: " + Arrays.toString(Destino.values()));
+        }
     }
 }

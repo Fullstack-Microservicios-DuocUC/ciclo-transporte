@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import cl.duoc.mineria.ciclo_transporte.exception.ServicioExternoNoDisponibleException;
+
 @Service
 public class ExternalValidationService {
 
@@ -13,7 +15,7 @@ public class ExternalValidationService {
         this.webClient = webClientBuilder.build();
     }
 
-    // 🚚 CAMIONES (Puerto 8084)
+    // CAMIONES (Puerto 8084)
     public boolean verificarCamionActivo(Long camionId) {
         try {
             Boolean existe = this.webClient.get()
@@ -22,14 +24,16 @@ public class ExternalValidationService {
                 .bodyToMono(Boolean.class)
                 .block();
             return existe != null && existe;
+        } catch (WebClientResponseException.NotFound e) {
+            return false; // el recurso no existe: respuesta legítima
         } catch (Exception e) {
-            // Imprime la causa real (ej: Connection refused o 404 Not Found)
-            System.out.println("[Transporte] Error en Camiones (8084): " + e.getMessage());
-            return true; 
+            // Timeout, conexión rechazada, 5xx, etc: el servicio no puede confirmar -> rechazar la operación
+            throw new ServicioExternoNoDisponibleException(
+                "No se pudo validar el camión " + camionId + ": " + e.getMessage());
         }
     }
 
-    // 🏗️ PALAS (Puerto 8083)
+    // PALAS (Puerto 8083)
     public boolean verificarPalaActiva(Long palaId) {
         try {
             Boolean existe = this.webClient.get()
@@ -44,7 +48,7 @@ public class ExternalValidationService {
         }
     }
 
-    // 👤 USUARIOS / PALEROS (Puerto 8081)
+    // USUARIOS / PALEROS (Puerto 8081)
     public boolean verificarPaleroAutorizado(Long paleroId) {
         try {
             // Invoca al endpoint especializado que valida la existencia y el rol OPERADOR_PALA
@@ -63,7 +67,7 @@ public class ExternalValidationService {
         }
     }
 
-    // 💎 MATERIALES (Puerto 8086)
+    // MATERIALES (Puerto 8086)
     public boolean verificarMaterialValido(Long materialId) {
         try {
             Boolean existe = this.webClient.get()
