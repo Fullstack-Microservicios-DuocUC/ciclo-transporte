@@ -17,7 +17,7 @@ public class ExternalAsignadorService {
         try {
             // 1. Hacemos la "llamada" al microservicio Asignador (que está en el puerto 8087)
             DestinoAsignadoDTO respuesta = this.webClient.get()
-                    .uri("http://127.0.0.1:8087/api/v1/asignador/destino?palaId={palaId}&clasificacionMaterial={material}", 
+                    .uri("http://asignador/api/v1/asignador/destino?palaId={palaId}&clasificacionMaterial={material}", 
                          palaId, clasificacionMaterial)
                     .retrieve()
                     .bodyToMono(DestinoAsignadoDTO.class) // 2. Atrapamos la respuesta en la "cajita" que creamos en el Paso 1
@@ -37,7 +37,7 @@ public class ExternalAsignadorService {
     public String obtenerDestinoPorMaterialId(Long palaId, Long materialId) {
         try {
             Map<String, Object> material = this.webClient.get()
-                    .uri("http://127.0.0.1:8086/api/v1/materiales/{id}", materialId)
+                    .uri("http://materiales/api/v1/materiales/{id}", materialId)
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                     .block();

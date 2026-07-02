@@ -19,7 +19,7 @@ public class ExternalValidationService {
     public boolean verificarCamionActivo(Long camionId) {
         try {
             Boolean existe = this.webClient.get()
-                .uri("http://127.0.0.1:8084/api/v1/camiones/existe/{id}", camionId)
+                .uri("http://camiones/api/v1/camiones/existe/{id}", camionId)
                 .retrieve()
                 .bodyToMono(Boolean.class)
                 .block();
@@ -37,7 +37,7 @@ public class ExternalValidationService {
     public boolean verificarPalaActiva(Long palaId) {
         try {
             Boolean existe = this.webClient.get()
-                .uri("http://127.0.0.1:8083/api/v1/palas/existe/{id}", palaId)
+                .uri("http://palas/api/v1/palas/existe/{id}", palaId)
                 .retrieve()
                 .bodyToMono(Boolean.class)
                 .block();
@@ -53,7 +53,7 @@ public class ExternalValidationService {
         try {
             // Invoca al endpoint especializado que valida la existencia y el rol OPERADOR_PALA
             Boolean esPaleroValido = this.webClient.get()
-                .uri("http://127.0.0.1:8081/api/v1/usuarios/paleros/{id}", paleroId)
+                .uri("http://usuarios/api/v1/usuarios/paleros/{id}", paleroId)
                 .retrieve()
                 .bodyToMono(Boolean.class)
                 .block();
@@ -71,7 +71,7 @@ public class ExternalValidationService {
     public boolean verificarMaterialValido(Long materialId) {
         try {
             Boolean existe = this.webClient.get()
-                .uri("http://127.0.0.1:8086/api/v1/materiales/existe/{id}", materialId)
+                .uri("http://materiales/api/v1/materiales/existe/{id}", materialId)
                 .retrieve()
                 .bodyToMono(Boolean.class)
                 .block();
