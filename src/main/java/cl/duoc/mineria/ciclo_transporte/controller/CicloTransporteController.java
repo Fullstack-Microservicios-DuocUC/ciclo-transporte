@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/ciclos-transporte")
+@RequestMapping("/api/v1/ciclo-transporte")
 @Tag(name = "Gestión de Ciclos de Transporte", description = "Operaciones para registrar y seguir el ciclo de vida de los viajes de transporte de material.")
 public class CicloTransporteController {
 
